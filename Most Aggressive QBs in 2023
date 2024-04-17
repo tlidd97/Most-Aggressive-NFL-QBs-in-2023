@@ -1,16 +1,22 @@
+## This is coded in Python. Looking to find the most aggressive passers in 2023 ##
+
 import pandas as pd
 import nfl_data_py as nfl
 
+# Import data from the 2023 season #
 pbp_py = nfl.import_pbp_data([2023])
 
+# Filter to only pass plays and passing plays where air yards are not missing #
 filter_crit = 'play_type == "pass" & air_yards.notnull()'
 
+# Group by passer_id and passer. Then aggregate the data to calculate the number of plays and the average air yards per pass per player # 
 pbp_py_p = (
     pbp_py.query(filter_crit)
     .groupby(["passer_id", "passer"])
     .agg({"air_yards": ["count", "mean"]})
 )
 
+# Reformatting the column heads with the list() and map() functions. Then sorting the mean of the air yards with QBs having more than 100 plays. Finally printing the outputs with the to_string() function # 
 pbp_py_p.columns = list(map("_".join, pbp_py_p.columns.values))
 sort_crit = "air_yards_count > 100"
 print(
@@ -19,4 +25,3 @@ print(
     .to_string()
 )
 
-# This code is used in Python #
